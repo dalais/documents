@@ -12,5 +12,8 @@
 */
 
 Route::get('/', function () {
-    return view('welcome');
-});
+    return view('documents.index');
+})->name('home');
+
+Route::resource('documents', 'DocumentController')
+    ->only(['index', 'show', 'store', 'update', 'destroy']);
