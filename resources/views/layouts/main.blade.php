@@ -11,6 +11,7 @@
 
     <!-- Scripts -->
     <script type="module" src="{{ asset('js/main.js') }}" defer></script>
+    <script src="{{ asset('js/axios.js') }}" defer></script>
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="https://fonts.gstatic.com">
