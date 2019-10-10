@@ -1,5 +1,5 @@
-import Vue from 'vue';
-import VueRouter from 'vue-router';
+import Vue from '../vue.js';
+import VueRouter from '../vue-router.js';
 import {routes} from './routes.js';
 
 Vue.use(VueRouter);

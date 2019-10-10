@@ -1,4 +1,4 @@
-import docListComponent from '../components/doclist-component.vue';
+import docListComponent from '../components/doclist.js';
 
 export const routes = [
     {
