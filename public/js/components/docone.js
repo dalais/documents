@@ -7,12 +7,24 @@ const Docone = {
         }
     },
     template: DoconeTemplate,
-    created() {
+    mounted() {
         let th = this;
         let id = this.$route.params.id;
-        axios.get('/api/documents/' + id, {emulateJSON: true}).then(response => {
+        setTimeout( () => axios.get('/api/documents/' + id, {emulateJSON: true}).then(response => {
             th.result = response.data
-        })
+        }),0);
+    },
+    methods: {
+        clicked(id) {
+            if(confirm("Действительно хотите удалить этот документ?")){
+
+                axios.delete('/api/documents/'+id)
+                    .then( () => this.$router.push({ name: 'doc_list' }) )
+                    .catch(error => {
+                        console.log(error);
+                    })
+            }
+        }
     }
 }
 
