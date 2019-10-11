@@ -13,10 +13,3 @@
 Route::any('{any?}', function () {
     return view('layouts.main');
 })->where('any','.*');
-
-/*Route::get('/', function () {
-    return view('layouts.index');
-})->name('home');*/
-
-Route::resource('documents', 'DocumentController')
-    ->only(['index', 'show', 'store', 'update', 'destroy']);

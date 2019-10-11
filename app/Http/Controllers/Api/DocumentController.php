@@ -39,11 +39,11 @@ class DocumentController extends Controller
     public function store(Request $request)
     {
         try {
-            $r_data = $request->json('body');
-            $validator = Validator::make($r_data, [
-                'title' => 'required|string',
-                'description' => 'sometimes|nullable|min:3|max:1500',
-                'file' => 'sometimes|base64image|base64mimes:jpeg,jpg,gif,svg,png',
+            $validator = Validator::make($request->all(), [
+                'body.title' => 'required|string',
+                'body.description' => 'required|string|min:3|max:1500',
+                'body.file.filename' => 'required|string',
+                'body.file.size' => 'required|numeric',
             ]);
             if ($validator->fails()) {
                 return response()->json([
@@ -51,10 +51,13 @@ class DocumentController extends Controller
                     'message' => $validator->errors(),
                 ]);
             }
+            $document = Document::create($request->json('body'));
+            $document->file()->create($request->json('body')['file']);
+
             return response()->json([
-                'status' => 'Ok',
+                'status' => 'success',
                 'message' => 'Документ добавлен',
-                'data' => null
+                'data' => $document
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -97,11 +100,12 @@ class DocumentController extends Controller
     public function update(Request $request, $id)
     {
         try {
-            $document = Document::find($id);
-            $r_data = $request->json('body');
-            $validator = Validator::make($r_data, [
-                'title' => 'sometimes|string',
-                'description' => 'sometimes|nullable|min:3|max:1500'
+            $document = Document::with('file')->find($id);
+            $validator = Validator::make($request->all(), [
+                'body.title' => 'sometimes|string',
+                'body.description' => 'sometimes|string|min:3|max:1500',
+                'body.file.size' => 'sometimes|numeric',
+                'body.file.filename' => 'sometimes|string',
             ]);
             if ($validator->fails()) {
                 return response()->json([
@@ -109,7 +113,10 @@ class DocumentController extends Controller
                     'message' => $validator->errors(),
                 ]);
             }
-            $document->update($r_data);
+            $document->update($request->json('body'));
+            if ($request->json('body')['file']) {
+                $document->file->update($request->json('body')['file']);
+            }
             return response()->json([
                 'status' => 'success',
                 'message' => 'Документ изменен',
