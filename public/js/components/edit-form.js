@@ -29,17 +29,18 @@ const EditForm = {
             if (formData.get('file').size === 0) {
                 formData.delete('file')
             }
-            axios.put('/api/documents/' + id, formData, {method: 'PUT',emulateJSON: true, headers: {
+            formData.append('_method', 'put');
+            axios.post('/api/documents/' + id, formData, {method: "PUT", emulateJSON: true, headers: {
                     'Content-Type': 'multipart/form-data'
                 }})
                 .then(response => {
                     console.log(response.data)
-                    /*const status = response.data.status;
+                    const status = response.data.status;
                     if (status === 'success') {
                         this.$router.push({ name: 'doc_one', params: { id: id }});
                     } else {
                         console.log(response.data)
-                    }*/
+                    }
                 });
         }
     }
