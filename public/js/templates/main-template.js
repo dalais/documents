@@ -3,11 +3,6 @@ const MainTemplate = `
     <Navbar></Navbar>
     <div class="jumbotron">
         <div class="container">
-            <div class="row text-sm-center">
-                <div class="col-md-8">
-                    <h5 class="card-title text-danger">Загрузка файла не работает</h5>
-                </div>
-            </div>
         </div>
     </div>
 

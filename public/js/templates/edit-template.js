@@ -7,7 +7,7 @@ const EditTemplate = `
             <div class="form-group">
                 <label for="inputTitle" class="col-sm-2 col-form-label">Название:</label>
                 <div class="col-sm-10">
-                    <input type="text" name="title" class="form-control" id="inputTitle" v-model="result.title">
+                    <input type="text" name="title" ref="title" class="form-control" id="inputTitle" v-model="result.title">
                     <p>&nbsp;
                         <p v-if="errors.title">
                             <small class="error text-danger" v-show="true">Введите название</small>
@@ -18,7 +18,7 @@ const EditTemplate = `
             <div class="form-group">
                 <label for="inputDescription" class="col-sm-2 col-form-label">Описание:</label>
                 <div class="col-sm-10">
-                    <textarea class="form-control" name="description" id="inputDescription" v-model="result.description"></textarea>
+                    <textarea class="form-control" ref="description" name="description" id="inputDescription" v-model="result.description"></textarea>
                     <p>&nbsp;
                         <p v-if="errors.description">
                             <small class="error text-danger" v-show="true">Описание не должно быть пустым</small>

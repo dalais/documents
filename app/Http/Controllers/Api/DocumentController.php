@@ -40,10 +40,9 @@ class DocumentController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'body.title' => 'required|string',
-                'body.description' => 'required|string|min:3|max:1500',
-                'body.file.filename' => 'required|string',
-                'body.file.size' => 'required|numeric',
+                'title' => 'required|string',
+                'description' => 'required|string|min:3|max:1500',
+                'file' => 'required|file|image|max:1500000'
             ]);
             if ($validator->fails()) {
                 return response()->json([
@@ -51,13 +50,25 @@ class DocumentController extends Controller
                     'message' => $validator->errors(),
                 ]);
             }
-            $document = Document::create($request->json('body'));
-            $document->file()->create($request->json('body')['file']);
-
+            $file = $request->file('file');
+            $destinationPath = 'uploads';
+            if(file_exists($destinationPath. '/' . $file->getClientOriginalName())){
+                unlink($destinationPath. '/' . $file->getClientOriginalName());
+            }
+            $document = Document::create([
+                'title' => $request->get('title'),
+                'description' => $request->get('description')
+            ]);
+            $document->file()->create([
+                'filename' => $file->getClientOriginalName(),
+                'path' => $destinationPath . '/' . $file->getClientOriginalName(),
+                'size' => $file->getSize()
+            ]);
+            $file->move($destinationPath,$file->getClientOriginalName());
             return response()->json([
                 'status' => 'success',
                 'message' => 'Документ добавлен',
-                'data' => $document
+                'data' => $document->toArray()
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -102,10 +113,9 @@ class DocumentController extends Controller
         try {
             $document = Document::with('file')->find($id);
             $validator = Validator::make($request->all(), [
-                'body.title' => 'sometimes|string',
-                'body.description' => 'sometimes|string|min:3|max:1500',
-                'body.file.size' => 'sometimes|numeric',
-                'body.file.filename' => 'sometimes|string',
+                'title' => 'sometimes|string',
+                'description' => 'sometimes|string|min:3|max:1500',
+                'file' => 'sometimes|file|image|max:1500000'
             ]);
             if ($validator->fails()) {
                 return response()->json([
@@ -113,14 +123,27 @@ class DocumentController extends Controller
                     'message' => $validator->errors(),
                 ]);
             }
-            $document->update($request->json('body'));
-            if ($request->json('body')['file']) {
-                $document->file->update($request->json('body')['file']);
+            $document->update($request->all());
+            if ($request->file('file')) {
+                $file = $request->file('file');
+                $destinationPath = 'uploads';
+
+                if ($request->file('file')) {
+                    $document->file->update([
+                        'filename' => $file->getClientOriginalName(),
+                        'path' => $destinationPath . '/' . $file->getClientOriginalName(),
+                        'size' => $file->getSize()
+                    ]);
+                }
+                if(file_exists($destinationPath. '/' . $file->getClientOriginalName())){
+                    unlink($destinationPath. '/' . $file->getClientOriginalName());
+                }
+                $file->move($destinationPath,$file->getClientOriginalName());
             }
             return response()->json([
                 'status' => 'success',
                 'message' => 'Документ изменен',
-                'data' => $document,
+                'data' => $request->all(),
             ]);
         } catch (\Exception $e) {
             return response()->json([
